@@ -1,6 +1,6 @@
 {
   "name": "dat.gui",
-  "version": "0.7.7",
+  "version": "0.7.9",
   "description": "A lightweight graphical user interface for changing variables in JavaScript.",
   "main": "build/dat.gui.js",
   "module": "build/dat.gui.module.js",
@@ -8,7 +8,7 @@
     "test": "tests"
   },
   "scripts": {
-    "dev": "concurrently --names \"ROLLUP,HTTP\" -c \"bgBlue.bold,bgGreen.bold\" \"rollup -c -w -m inline\" \"serve --listen 8080\"",
+    "dev": "concurrently --names \"ROLLUP,HTTP\" -c \"bgBlue.bold,bgGreen.bold\" \"rollup -c -w -m inline\" \"serve --listen 8088\"",
     "build": "rollup -c && rollup -c rollup.config.min.js",
     "build-docs": "jsdoc2md -f src/dat/gui/GUI.js src/dat/controllers/Controller.js src/dat/controllers/NumberController.js | replace-between --target API.md --token API",
     "lint": "eslint src",
