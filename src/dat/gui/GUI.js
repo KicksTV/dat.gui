@@ -369,6 +369,9 @@ const GUI = function(pars) {
       _this.closed = !_this.closed;
     });
     // Oh, you're a nested GUI!
+
+    createTooltip(this)
+
   } else {
     if (params.closed === undefined) {
       params.closed = true;
@@ -522,6 +525,13 @@ common.extend(
         {
           factoryArgs: Array.prototype.slice.call(arguments, 2)
         }
+      );
+    },
+
+    help: function(text) {
+      return help(
+        this,
+        text,
       );
     },
 
@@ -986,6 +996,18 @@ function augmentController(gui, li, controller) {
     remove: function() {
       controller.__gui.remove(controller);
       return controller;
+    },
+
+    /**
+     * Adds help text to controller.
+     * @return {Controller}
+     */
+     set_help_text: function(text) {
+      controller.help(text);
+      if (controller.help_text){
+        updateToolTip(controller)
+      }
+      return controller;
     }
   });
 
@@ -1131,6 +1153,62 @@ function recallSavedValue(gui, controller) {
   }
 }
 
+function createTooltip() {
+  const container = document.createElement('div');
+  dom.addClass(container, 'tooltip-container');
+  dom.addClass(container, 'hide');
+
+  const name = document.createElement('span');
+  dom.addClass(name, 'tooltip-name');
+
+  const help_text = document.createElement('p');
+  dom.addClass(help_text, 'tooltip-text');
+
+  const triangle = document.createElement('div');
+  dom.addClass(triangle, 'triangle-right');
+
+  container.appendChild(name);
+  container.appendChild(help_text);
+  container.appendChild(triangle);
+
+  document.getElementsByTagName('body')[0].appendChild(container)
+}
+function updateToolTip(controller) {  
+  var li = controller.__li
+  dom.bind(li, 'mouseover', function() {
+    var tooltipContainer = document.getElementsByClassName('tooltip-container')[0]
+    var tooltip_name = document.getElementsByClassName('tooltip-name')[0]
+    var tooltip_text = document.getElementsByClassName('tooltip-text')[0]
+    var tooltip_triangle = document.getElementsByClassName('triangle-right')[0]
+    tooltip_name.innerHTML = controller.property
+    tooltip_text.innerHTML = controller.help_text
+    dom.addClass(tooltipContainer, 'show');
+    dom.removeClass(tooltipContainer, 'hide');
+    
+
+    const rect = li.getBoundingClientRect();
+    var tooltipContainerHeight = tooltipContainer.offsetHeight
+    var left = rect.left-tooltipContainer.offsetWidth - 8
+    var top = rect.top - (tooltipContainerHeight/2)
+    var triangleTopPos = (tooltipContainerHeight/2) + (tooltip_triangle.offsetHeight/2)
+    console.log(tooltip_triangle.offsetHeight, triangleTopPos)
+
+    tooltipContainer.style.left = `${left}px`;
+    tooltipContainer.style.top = `${top}px`;
+
+    tooltip_triangle.style.right = `${-12}px`;
+    tooltip_triangle.style.top = `${triangleTopPos}px`;
+
+    
+
+    
+  });
+  dom.bind(li, 'mouseout', function() {
+    var tooltipContainer = document.getElementsByClassName('tooltip-container')[0]
+    dom.addClass(tooltipContainer, 'hide');
+    dom.removeClass(tooltipContainer, 'show');
+  });
+}
 function add(gui, object, property, params) {
   if (object[property] === undefined) {
     throw new Error(`Object "${object}" has no property "${property}"`);
@@ -1149,6 +1227,8 @@ function add(gui, object, property, params) {
     params.before = params.before.__li;
   }
 
+  var controller_obj = controller
+
   recallSavedValue(gui, controller);
 
   dom.addClass(controller.domElement, 'c');
@@ -1162,6 +1242,9 @@ function add(gui, object, property, params) {
   container.appendChild(controller.domElement);
 
   const li = addRow(gui, container, params.before);
+  li.id = controller_obj.property
+  
+  
 
   dom.addClass(li, GUI.CLASS_CONTROLLER_ROW);
   if (controller instanceof ColorController) {
@@ -1171,7 +1254,6 @@ function add(gui, object, property, params) {
   }
 
   augmentController(gui, li, controller);
-
   gui.__controllers.push(controller);
 
   return controller;

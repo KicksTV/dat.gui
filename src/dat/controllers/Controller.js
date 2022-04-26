@@ -40,6 +40,12 @@ class Controller {
     this.property = property;
 
     /**
+     * The help text which displays on mouse hover
+     * @type {String}
+     */
+     this.help_text = null;
+
+    /**
      * The function to be called on change.
      * @type {Function}
      * @ignore
@@ -119,6 +125,14 @@ class Controller {
    */
   isModified() {
     return this.initialValue !== this.getValue();
+  }
+
+  /**
+   * @returns {Controller} Sets help text to be displayed on hover
+   */
+  help(text) {
+    this.help_text = text
+    return this;
   }
 }
 

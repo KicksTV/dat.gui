@@ -48,6 +48,33 @@ $input-color: lighten($background-color, 8.5%);
 
 @import "structure";
 
+.hide {
+  display: none;
+}
+
+.tooltip-container {
+  position: absolute;
+  width: 300px;
+  background: #1a1a1a;
+  padding: 6px;
+  border: 1px solid white;
+}
+.tooltip-name {
+  color: #44abda;
+}
+.tooltip-text {
+  color: whitesmoke;
+  font-size: 0.85em;
+}
+.triangle-right {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-left: 12px solid #1a1a1a;
+  border-bottom: 6px solid transparent;
+}
+
 /** Main type */
 .dg {
 
